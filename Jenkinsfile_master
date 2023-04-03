@@ -4,6 +4,7 @@ pipeline {
         stages {
             stage('Initialization Stage') {
                 steps {
+                    echo 'we are initializing bro ;-;'
                     echo 'Initial : Delete containers and images'
                      dir('devTool-week_10') {
                         echo "Current path is  ${pwd()}"
@@ -14,6 +15,7 @@ pipeline {
 
             stage('Building Stage'){
                 steps {
+                    echo 'we are building bro ;-;'
                     dir('devTool-week_10') {
                         echo "Current path is ${pwd()}"
                         sh "docker-compose build"
@@ -23,6 +25,7 @@ pipeline {
 
             stage('Pushing Stage'){
                 steps {
+                    echo 'we are pushing bro ;-;'
                     dir('devTool-week_10') {
                         withCredentials([usernamePassword(credentialsId: 'dockerhub', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
                             sh 'docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD'
