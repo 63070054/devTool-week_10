@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Frontend DevTool</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/css/iziToast.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/js/iziToast.min.js"></script>
+
+  <style>
+    .w-full {
+      width: 100%;
+    }
+
+    .h-full {
+      height: 100%;
+    }
+
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    img {
+      height: 100%;
+      max-height: 50%;
+      width: 60%;
+      max-width: 60%;
+      object-fit: cover;
+      object-position: center;
+    }
+
+    .img-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+      height: 100%;
+    }
+
+    .main-container {
+      padding: 20px;
+      width: 90vw;
+      height: 90vh;
+      min-width: 90vw;
+      min-height: 90vh;
+    }
+
+    form {
+      display: flex;
+      justify-content: center;
+      flex-direction: column;
+      height: 100%;
+    }
+  </style>
+
+</head>
+
+<body>
+  <div class="z-depth-5 main-container row">
+    <div class="col s6 h-full">
+      <form>
+        <label for="firstName">First Name :</label>
+        <input type="text" id="firstNameValue" name="firstName"><br>
+
+        <label for="lastName">Last Name :</label>
+        <input type="text" id="lastNameValue" name="lastName"><br>
+
+        <label for="studentId">Student ID :</label>
+        <input type="text" id="studentIdValue" name="studentId"><br>
+
+        <label for="fileInput">Select an image file :</label>
+        <div class="file-field input-field">
+          <div class="btn">
+            <span>File</span>
+            <input type="file" id="fileInput" accept="image/*">
+          </div>
+          <div class="file-path-wrapper">
+            <input class="file-path validate" type="text" placeholder="No file selected" id="fileSelectedName">
+          </div>
+        </div>
+        <button class="btn waves-effect waves-light w-full" type="button" name="action" onclick="convertImage()">convert
+          <i class="material-icons right">send</i>
+        </button>
+      </form>
+    </div>
+
+    <div class="col s6 img-container">
+      <img id="imageSelected">
+      <img id="outputImg">
+    </div>
+  </div>
+</body>
+
+<script>
+
+  let image = null;
+
+  const convertImage = () => {
+    const name = firstNameValue.value
+    const surname = lastNameValue.value
+    const numbers = studentIdValue.value
+
+
+    if (!name || !surname || !numbers || !image) {
+      return iziToast.show({
+        title: 'Warning!',
+        message: 'Please fill all the input in form.',
+        color: 'orange',
+        position: 'topRight',
+        timeout: 5000
+      });
+    }
+
+    const url = "http://34.226.249.45:8080/process-image"
+    outputImg.src = "https://cdn.discordapp.com/attachments/833549334573744159/1089551354571276298/loading.gif"
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ name, surname, numbers, image })
+    })
+      .then(response => response.json())
+      .then(data => {
+        iziToast.show({
+          title: 'Success!',
+          message: 'Your image has been converted !!!.',
+          color: 'green',
+          position: 'topRight',
+          timeout: 5000
+        });
+        outputImg.src = data.processed_image
+      })
+      .catch(error => {
+        iziToast.show({
+          title: 'Error!',
+          message: 'Try to convert again !!!',
+          color: 'red',
+          position: 'topRight',
+          timeout: 5000
+        });
+      });
+  }
+
+  const fileInput = document.querySelector('#fileInput');
+  fileInput.addEventListener('change', (event) => {
+    const file = event.target.files[0];
+    const fileName = file.name;
+    const reader = new FileReader();
+    reader.addEventListener('load', (event) => {
+      imageSelected.setAttribute('src', event.target.result);
+      image = event.target.result
+    });
+    fileSelectedName.value = fileName
+    reader.readAsDataURL(file);
+  });
+
+</script>
+
+</html>
