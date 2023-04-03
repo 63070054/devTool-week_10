@@ -5,7 +5,7 @@ pipeline {
             stage('Initialization Stage') {
                 steps {
                     echo 'we are initializing bro ;-;'
-                    echo 'try webhook setting'
+                    echo 'try webhook setting 2'
                     echo 'Initial : Delete containers and images'
                      dir('devTool-week_10') {
                         echo "Current path is  ${pwd()}"
